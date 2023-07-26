@@ -1,17 +1,32 @@
+// App.js
 import "./App.css";
 
-// App.js
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import TodoList from "./components/TodoList";
 import TodoForm from "./components/TodoForm";
+import { v4 as uuidv4 } from "uuid";
+
+// Helper function to retrieve todos from local storage
+const getStoredTodos = () => {
+  const storedTodos = JSON.parse(localStorage.getItem("todos")) || [];
+  return storedTodos;
+};
+
+// Helper function to save todos to local storage
+const saveTodosToLocal = (todos) => {
+  localStorage.setItem("todos", JSON.stringify(todos));
+};
 
 const App = () => {
-  const [todos, setTodos] = useState([]);
+  // -- check if there is any stored todo list
+  const storedTodos = getStoredTodos();
+
+  const [todos, setTodos] = useState(storedTodos);
 
   const handleAddTodo = useCallback((text) => {
     setTodos((prevTodos) => [
       ...prevTodos,
-      { id: Date.now(), text, completed: false },
+      { id: uuidv4(), text, completed: false },
     ]);
   }, []);
 
@@ -22,6 +37,11 @@ const App = () => {
       )
     );
   }, []);
+
+  // Save todos to local storage whenever todos state changes
+  useEffect(() => {
+    saveTodosToLocal(todos);
+  }, [todos]);
 
   const completedTodos = useMemo(
     () => todos.filter((todo) => todo.completed),
