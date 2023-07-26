@@ -1,0 +1,16 @@
+{
+  "todos": [
+    {
+      "text": "testing 1",
+      "completed": true,
+      "dueDate": "2023-07-27",
+      "id": 1
+    },
+    {
+      "text": "sleep",
+      "completed": false,
+      "dueDate": "2023-07-21",
+      "id": 2
+    }
+  ]
+}

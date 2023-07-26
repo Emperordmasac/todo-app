@@ -11,7 +11,7 @@ const App = () => {
         <h1>Todo App</h1>
         <TodoForm />
         <h2>Incomplete Todos</h2>
-        <TodoList />
+        <TodoList showCompleted={false} />
         <h2>Completed Todos</h2>
         <TodoList showCompleted />
       </div>
