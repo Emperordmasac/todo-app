@@ -1,43 +1,22 @@
 import "./App.css";
 import icon1 from "../public/images/icon.png";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 
 const LOCAL_STORAGE_KEY = "tasks";
 
-const useLocalStorage = (key, initialValue) => {
-  const [storedValue, setStoredValue] = useState(() => {
-    try {
-      const item = window.localStorage.getItem(key);
-      return item ? JSON.parse(item) : initialValue;
-    } catch (error) {
-      console.error("Error reading from local storage:", error);
-      return initialValue;
-    }
-  });
-
-  const setValue = (value) => {
-    try {
-      setStoredValue(value);
-      window.localStorage.setItem(key, JSON.stringify(value));
-    } catch (error) {
-      console.error("Error writing to local storage:", error);
-    }
-  };
-
-  return [storedValue, setValue];
-};
-
 const App = () => {
-  const [tasks, setTasks] = useLocalStorage(LOCAL_STORAGE_KEY, []);
+  const [tasks, setTasks] = useState(
+    () => JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || []
+  );
   const [taskInput, setTaskInput] = useState("");
 
   useEffect(() => {
-    setTasks(tasks);
-  }, [tasks, setTasks]);
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(tasks));
+  }, [tasks]);
 
-  const handleInputChange = useCallback((event) => {
+  const handleInputChange = (event) => {
     setTaskInput(event.target.value);
-  }, []);
+  };
 
   const handleAddTask = useCallback(() => {
     if (taskInput.trim() !== "") {
@@ -47,25 +26,19 @@ const App = () => {
       ]);
       setTaskInput("");
     }
-  }, [taskInput, setTasks]);
+  }, [taskInput]);
 
-  const handleToggleTask = useCallback(
-    (taskId) => {
-      setTasks((prevTasks) =>
-        prevTasks.map((task) =>
-          task.id === taskId ? { ...task, completed: !task.completed } : task
-        )
-      );
-    },
-    [setTasks]
-  );
+  const handleToggleTask = useCallback((taskId) => {
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task.id === taskId ? { ...task, completed: !task.completed } : task
+      )
+    );
+  }, []);
 
-  const handleDeleteTask = useCallback(
-    (taskId) => {
-      setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
-    },
-    [setTasks]
-  );
+  const handleDeleteTask = useCallback((taskId) => {
+    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+  }, []);
 
   return (
     <div className="container">
